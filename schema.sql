@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS endereco (
   numero INT NOT NULL,
   complemento VARCHAR(45) NULL,
   estado_id INT NOT NULL,
+  cidade VARCHAR(50) NOT NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (estado_id) REFERENCES estado (id));
 
