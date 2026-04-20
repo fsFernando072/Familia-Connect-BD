@@ -111,6 +111,19 @@ CREATE TABLE IF NOT EXISTS entrega (
   FOREIGN KEY (funcionario_id) REFERENCES funcionario (id),
   FOREIGN KEY (pessoa_id) REFERENCES pessoa (id));
   
+  CREATE TABLE IF NOT EXISTS categoria(
+  id INT NOT NULL AUTO_INCREMENT,
+  nome VARCHAR(45) NOT NULL,
+  PRIMARY KEY(id));
+  
+  CREATE TABLE Produto (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(45) NOT NULL,
+  quantidade INT NOT NULL,
+  descricao VARCHAR(100),
+  Categoria_id INT,
+  FOREIGN KEY (Categoria_id) REFERENCES Categoria(id));
+  
 INSERT INTO estado (nome, sigla) VALUES
 ('Acre', 'AC'),
 ('Alagoas', 'AL'),
