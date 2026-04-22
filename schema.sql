@@ -29,13 +29,9 @@ CREATE TABLE IF NOT EXISTS familia (
   data_cadastro DATE NOT NULL,
   endereco_id INT NOT NULL,
   foto_familia VARCHAR(100) NULL,
+  possui_prioridade TINYINT(1)  NOT NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (endereco_id) REFERENCES endereco (id));
-
-CREATE TABLE IF NOT EXISTS deficiencia (
-  id INT NOT NULL AUTO_INCREMENT,
-  nome VARCHAR(45) NULL,
-  PRIMARY KEY (id));
 
 CREATE TABLE IF NOT EXISTS pessoa (
   id INT NOT NULL AUTO_INCREMENT,
@@ -48,12 +44,10 @@ CREATE TABLE IF NOT EXISTS pessoa (
   familia_id INT NOT NULL,
   is_responsavel TINYINT(1) NOT NULL,
   grau_parentesco VARCHAR(45) NOT NULL,
-  deficiencia_id INT NULL,
   telefone VARCHAR(11) NOT NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (profissao_id) REFERENCES profissao (id),
-  FOREIGN KEY (familia_id) REFERENCES familia (id),
-  FOREIGN KEY (deficiencia_id) REFERENCES deficiencia (id));
+  FOREIGN KEY (familia_id) REFERENCES familia (id));
 
 CREATE TABLE IF NOT EXISTS cargo (
   id INT NOT NULL AUTO_INCREMENT,
