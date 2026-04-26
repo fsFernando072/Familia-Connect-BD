@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS funcionario (
   id INT NOT NULL AUTO_INCREMENT,
   nome VARCHAR(100) NOT NULL,
   cpf VARCHAR(11) NOT NULL,
-  senha VARCHAR(20) NOT NULL,
+  senha VARCHAR(255) NOT NULL,
   foto_funcionario VARCHAR(100) NULL,
   cargo_id INT NOT NULL,
   PRIMARY KEY (id),
@@ -95,28 +95,30 @@ CREATE TABLE IF NOT EXISTS auditoria (
   funcionario_id INT NOT NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (funcionario_id) REFERENCES funcionario (id));
-    
+  
+CREATE TABLE IF NOT EXISTS categoria(
+  id INT NOT NULL AUTO_INCREMENT,
+  nome VARCHAR(45) NOT NULL,
+  PRIMARY KEY(id));
+  
+CREATE TABLE IF NOT EXISTS produto (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(45) NOT NULL,
+  quantidade INT NOT NULL,
+  descricao VARCHAR(100),
+  categoria_id INT,
+  FOREIGN KEY (categoria_id) REFERENCES categoria(id));
+  
 CREATE TABLE IF NOT EXISTS entrega (
   id INT NOT NULL AUTO_INCREMENT,
   data_entrega DATE NOT NULL,
   funcionario_id INT NOT NULL,
   pessoa_id INT NOT NULL,
+  produto_id INT NOT NULL,
   PRIMARY KEY (id, data_entrega),
   FOREIGN KEY (funcionario_id) REFERENCES funcionario (id),
-  FOREIGN KEY (pessoa_id) REFERENCES pessoa (id));
-  
-  CREATE TABLE IF NOT EXISTS categoria(
-  id INT NOT NULL AUTO_INCREMENT,
-  nome VARCHAR(45) NOT NULL,
-  PRIMARY KEY(id));
-  
-  CREATE TABLE Produto (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  nome VARCHAR(45) NOT NULL,
-  quantidade INT NOT NULL,
-  descricao VARCHAR(100),
-  Categoria_id INT,
-  FOREIGN KEY (Categoria_id) REFERENCES Categoria(id));
+  FOREIGN KEY (pessoa_id) REFERENCES pessoa (id),
+  FOREIGN KEY (produto_id) REFERENCES produto(id));
   
 INSERT INTO estado (nome, sigla) VALUES
 ('Acre', 'AC'),
