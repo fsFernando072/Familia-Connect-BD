@@ -181,4 +181,4 @@ INSERT INTO profissao (nome) VALUES
 ('Técnico de manutenção'),
 ('Auxiliar de logística');
 
-insert into cargo (nome) values ('Recepcionista', 'Diretor');
+insert into cargo (nome) values ('Recepcionista'), ('Diretor');
