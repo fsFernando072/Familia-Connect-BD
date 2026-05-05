@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS funcionario (
   id INT NOT NULL AUTO_INCREMENT,
   nome VARCHAR(100) NOT NULL,
   cpf VARCHAR(11) NOT NULL,
-  senha VARCHAR(255) NOT NULL,
+  senha VARCHAR(100) NOT NULL, 
   foto_funcionario VARCHAR(100) NULL,
   cargo_id INT NOT NULL,
   PRIMARY KEY (id),
@@ -180,3 +180,5 @@ INSERT INTO profissao (nome) VALUES
 ('Professor de ensino médio'),
 ('Técnico de manutenção'),
 ('Auxiliar de logística');
+
+insert into cargo (nome) values ('Recepcionista', 'Diretor');
