@@ -25,11 +25,38 @@ CREATE TABLE `acesso` (
   PRIMARY KEY (`id`)
 );
 
-INSERT INTO `acesso` VALUES 
-(1,'cadastrar_familias'),(2,'cadastrar_funcionarios'),(3,'cadastrar_produtos'),(4,'cadastrar_entregas'),
-(5,'editar_produtos'),(6,'editar_familias'),(7,'editar_funcionarios'),(8,'editar_entregas'),
-(9,'excluir_familias'),(10,'excluir_produtos'),(11,'excluir_funcionarios'),(12,'excluir_entregas'),
-(13,'listar_familias'),(14,'listar_funcionarios'),(15,'listar_entregas'),(16,'listar_produtos');
+INSERT INTO `acesso` (nome_tela) VALUES 
+('cadastrar_familias'),
+('cadastrar_funcionarios'),
+('cadastrar_produtos'),
+('cadastrar_entregas'),
+('cadastrar_acessos'),
+('cadastrar_cargos'),
+('cadastrar_profissoes'),
+
+('editar_produtos'),
+('editar_familias'),
+('editar_funcionarios'),
+('editar_entregas'),
+('editar_acessos'),
+('editar_cargos'),
+('editar_profissoes'),
+
+('excluir_familias'),
+('excluir_produtos'),
+('excluir_funcionarios'),
+('excluir_entregas'),
+('excluir_acessos'),
+('excluir_cargos'),
+('excluir_profissoes'),
+
+('listar_familias'),
+('listar_funcionarios'),
+('listar_entregas'),
+('listar_produtos'),
+('listar_acessos'),
+('listar_cargos'),
+('listar_profissoes');
 
 -- 
 -- Tabela: cargo
@@ -226,3 +253,99 @@ CREATE TABLE `entrega` (
   CONSTRAINT `entrega_ibfk_2` FOREIGN KEY (`pessoa_id`) REFERENCES `pessoa` (`id`),
   CONSTRAINT `entrega_ibfk_3` FOREIGN KEY (`produto_id`) REFERENCES `produto` (`id`)
 );
+
+INSERT INTO familia (data_cadastro, endereco_id, foto_familia, possui_prioridade) VALUES
+('2025-01-01', 1,  'familia_01.jpg', 1),
+('2025-01-02', 1,  'familia_02.jpg', 0),
+('2025-01-03', 1,  'familia_03.jpg', 1),
+('2025-01-04', 1,  'familia_04.jpg', 0),
+('2025-01-05', 1,  'familia_05.jpg', 1),
+('2025-01-06', 1,  'familia_06.jpg', 0),
+('2025-01-07', 1,  'familia_07.jpg', 1),
+('2025-01-08', 1,  'familia_08.jpg', 0),
+('2025-01-09', 1,  'familia_09.jpg', 1),
+('2025-01-10', 1, 'familia_10.jpg', 0),
+('2025-01-11', 1, 'familia_11.jpg', 1),
+('2025-01-12', 1, 'familia_12.jpg', 0),
+('2025-01-13', 1, 'familia_13.jpg', 1),
+('2025-01-14', 1, 'familia_14.jpg', 0),
+('2025-01-15', 1, 'familia_15.jpg', 1),
+('2025-01-16', 1, 'familia_16.jpg', 0),
+('2025-01-17', 1, 'familia_17.jpg', 1),
+('2025-01-18', 1, 'familia_18.jpg', 0),
+('2025-01-19', 1, 'familia_19.jpg', 1),
+('2025-01-20', 1, 'familia_20.jpg', 0),
+('2025-01-21', 1, 'familia_21.jpg', 1),
+('2025-01-22', 1, 'familia_22.jpg', 0),
+('2025-01-23', 1, 'familia_23.jpg', 1),
+('2025-01-24', 1, 'familia_24.jpg', 0),
+('2025-01-25', 1, 'familia_25.jpg', 1),
+('2025-01-26', 1, 'familia_26.jpg', 0),
+('2025-01-27', 1, 'familia_27.jpg', 1),
+('2025-01-28', 1, 'familia_28.jpg', 0),
+('2025-01-29', 1, 'familia_29.jpg', 1),
+('2025-01-30', 1, 'familia_30.jpg', 0);
+
+INSERT INTO endereco (
+    cep,
+    bairro,
+    logradouro,
+    numero,
+    complemento,
+    cidade,
+    estado_id
+) VALUES (
+    '01310100',
+    'Bela Vista',
+    'Avenida Paulista',
+    1578,
+    'Apto 101',
+    'São Paulo',
+    1
+);
+
+/* POVOANDO PESSOAS NA FAMILIA X */
+INSERT INTO pessoa (
+    nome,
+    rg,
+    cpf,
+    dt_nascimento,
+    is_trabalhando,
+    profissao_id,
+    familia_id,
+    is_responsavel,
+    grau_parentesco,
+    telefone
+) VALUES('João da Silva','123456789','12345678901','1985-06-15', 1, 1, 61 ,1,'Pai', '1194002892'),
+		('Maria da Silva','987654321','98765432101','1988-09-20', 1, 2, 61, 0,'Mãe','11976543210'),
+		('Pedro da Silva','456789123','45678912301','2012-03-10', 0, null, 61, 0,'Filho','11965432109');
+        
+        
+/* TRAZER DADOS DA FAMILIA PARA LISTAGEM  | SELECT * FROM FAMILIAS*/
+SELECT
+	f.id as idFamilia,
+	p.nome as nomeResponsavel,
+    SUBSTRING_INDEX(p.nome, ' ', -1) as nomeFamilia,
+    p.telefone as telefoneResponsavel
+    FROM familia as f
+    INNER JOIN pessoa p ON
+    p.familia_id = f.id
+    WHERE p.is_responsavel = true;
+    
+/* TRAZER DADOS DOS DETALHES DA FAMILIA X COMEÇANDO PELO RESPONSÁVEL  | SELECT * FROM FAMILAI WHERE ID X*/
+SELECT
+	f.id as idFamilia,
+	p.*,
+    SUBSTRING_INDEX(p.nome, ' ', -1) as nomeFamilia
+    FROM familia as f
+    INNER JOIN pessoa p ON
+    p.familia_id = f.id
+    WHERE f.id = 61
+    ORDER BY is_responsavel DESC;
+
+/* SELECTS PARA OS DADOS DA DASHBOARD */
+/* % de famílias atendidas no mês */
+select * from familia;
+select * from entrega;
+
+    
