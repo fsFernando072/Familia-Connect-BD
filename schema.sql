@@ -152,7 +152,6 @@ CREATE TABLE `pessoa` (
   `rg` varchar(9) NOT NULL,
   `cpf` varchar(11) NOT NULL,
   `dt_nascimento` date NOT NULL,
-  `is_trabalhando` tinyint(1) NOT NULL,
   `profissao_id` int DEFAULT NULL,
   `familia_id` int NOT NULL,
   `is_responsavel` tinyint(1) NOT NULL,
@@ -317,16 +316,16 @@ INSERT INTO `familia` (data_cadastro, endereco_id, foto_familia, possui_priorida
 -- 
 -- pessoa
 -- 
-INSERT INTO `pessoa` (nome, rg, cpf, dt_nascimento, is_trabalhando, profissao_id, familia_id, is_responsavel, grau_parentesco, telefone) VALUES
-('João da Silva',   '123456789', '12345678901', '1985-06-15', 1, 1,    1, 1, 'Pai',    '11940028920'),
-('Maria da Silva',  '987654321', '98765432101', '1988-09-20', 1, 2,    1, 0, 'Mãe',   '11976543210'),
-('Pedro da Silva',  '456789123', '45678912301', '2012-03-10', 0, NULL, 1, 0, 'Filho', '11965432109'),
-('Carla Oliveira',  '321654987', '32165498701', '1990-04-12', 1, 5,    2, 1, 'Mãe',   '11955001100'),
-('Lucas Oliveira',  '654987321', '65498732101', '2015-11-08', 0, NULL, 2, 0, 'Filho', '11955001101'),
-('Fernanda Lima',   '789123456', '78912345601', '1978-02-25', 1, 12,   3, 1, 'Mãe',   '11933445566'),
-('Rafael Lima',     '159753486', '15975348601', '1975-07-30', 1, 8,    3, 0, 'Pai',   '11933445567'),
-('Beatriz Costa',   '258963147', '25896314701', '1995-12-01', 1, 13,   4, 1, 'Mãe',   '11922334455'),
-('Henrique Costa',  '369147258', '36914725801', '2018-05-20', 0, NULL, 4, 0, 'Filho', '11922334456');
+INSERT INTO `pessoa` (nome, rg, cpf, dt_nascimento, profissao_id, familia_id, is_responsavel, grau_parentesco, telefone) VALUES
+('João da Silva',   '123456789', '12345678901', '1985-06-15', 1,    1, 1, 'Pai',    '11940028920'),
+('Maria da Silva',  '987654321', '98765432101', '1988-09-20', 2,    1, 0, 'Mãe',   '11976543210'),
+('Pedro da Silva',  '456789123', '45678912301', '2012-03-10', NULL, 1, 0, 'Filho', '11965432109'),
+('Carla Oliveira',  '321654987', '32165498701', '1990-04-12', 5,    2, 1, 'Mãe',   '11955001100'),
+('Lucas Oliveira',  '654987321', '65498732101', '2015-11-08', NULL, 2, 0, 'Filho', '11955001101'),
+('Fernanda Lima',   '789123456', '78912345601', '1978-02-25', 12,   3, 1, 'Mãe',   '11933445566'),
+('Rafael Lima',     '159753486', '15975348601', '1975-07-30', 8,    3, 0, 'Pai',   '11933445567'),
+('Beatriz Costa',   '258963147', '25896314701', '1995-12-01', 13,   4, 1, 'Mãe',   '11922334455'),
+('Henrique Costa',  '369147258', '36914725801', '2018-05-20', NULL, 4, 0, 'Filho', '11922334456');
 
 -- 
 -- categoria
@@ -382,4 +381,3 @@ INSERT INTO `entrega` (data_entrega, funcionario_id, pessoa_id, produto_id) VALU
 ('2025-04-05', 2, 6, 7),
 ('2025-04-20', 1, 4, 8),
 ('2025-04-20', 2, 8, 1);
-
