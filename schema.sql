@@ -25,6 +25,32 @@ CREATE TABLE `cargo` (
 );
 
 -- 
+-- Tabela: categoria arquivo
+-- 
+CREATE TABLE `categoria_arquivo` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nome` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`)
+);
+
+-- 
+-- Tabela: arquivo
+-- 
+CREATE TABLE `arquivo` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nome_original` varchar(100) NOT NULL,
+  `nome_gerado` varchar(100) NOT NULL,
+  `mime_type` varchar(100) NOT NULL,
+  `tamanho` bigint NOT NULL,
+  `dados` longblob DEFAULT NULL,
+  `data_upload` datetime NOT NULL,
+  `categoria_arquivo_id` int NOT NULL,
+  KEY `categoria_arquivo_id` (`categoria_arquivo_id`),
+  CONSTRAINT `arquivo_ibfk_1` FOREIGN KEY (`categoria_arquivo_id`) REFERENCES `categoria_arquivo` (`id`),
+  PRIMARY KEY (`id`)
+);
+
+-- 
 -- Tabela: cargo_has_acesso
 -- 
 CREATE TABLE `cargo_has_acesso` (
@@ -46,12 +72,14 @@ CREATE TABLE `funcionario` (
   `nome` varchar(100) NOT NULL,
   `cpf` varchar(11) NOT NULL,
   `senha` varchar(100) NOT NULL,
-  `foto_funcionario` varchar(100) DEFAULT NULL,
+  `foto_id` int DEFAULT NULL,
   `cargo_id` int NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `cpf_UNIQUE` (`cpf`),
   KEY `cargo_id` (`cargo_id`),
-  CONSTRAINT `funcionario_ibfk_1` FOREIGN KEY (`cargo_id`) REFERENCES `cargo` (`id`)
+  KEY `foto_id` (`foto_id`),
+  CONSTRAINT `funcionario_ibfk_1` FOREIGN KEY (`cargo_id`) REFERENCES `cargo` (`id`),
+  CONSTRAINT `funcionario_ibfk_2` FOREIGN KEY (`foto_id`) REFERENCES `arquivo` (`id`)
 );
 
 -- 
@@ -127,11 +155,13 @@ CREATE TABLE `familia` (
   `id` int NOT NULL AUTO_INCREMENT,
   `data_cadastro` date NOT NULL,
   `endereco_id` int NOT NULL,
-  `foto_familia` varchar(100) DEFAULT NULL,
+  `foto_id` int DEFAULT NULL,
   `possui_prioridade` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `endereco_id` (`endereco_id`),
-  CONSTRAINT `familia_ibfk_1` FOREIGN KEY (`endereco_id`) REFERENCES `endereco` (`id`)
+  KEY `foto_id` (`foto_id`),
+  CONSTRAINT `familia_ibfk_1` FOREIGN KEY (`endereco_id`) REFERENCES `endereco` (`id`),
+  CONSTRAINT `familia_ibfk_2` FOREIGN KEY (`foto_id`) REFERENCES `arquivo` (`id`)
 );
 
 -- 
@@ -157,6 +187,7 @@ CREATE TABLE `pessoa` (
   `is_responsavel` tinyint(1) NOT NULL,
   `grau_parentesco` varchar(45) NOT NULL,
   `telefone` varchar(11) NOT NULL,
+  `sexo` varchar(200) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `profissao_id` (`profissao_id`),
   KEY `familia_id` (`familia_id`),
@@ -279,27 +310,34 @@ INSERT INTO `profissao` VALUES
 (29,'Técnico de manutenção'),(30,'Auxiliar de logística');
 
 -- 
+-- categoria arquivo
+-- 
+INSERT INTO `categoria_arquivo` (nome) VALUES
+('familias'),
+('funcionarios');
+
+-- 
 -- familia
 -- 
-INSERT INTO `familia` (data_cadastro, endereco_id, foto_familia, possui_prioridade) VALUES
-('2025-01-01', 1, 'familia_01.jpg', 1),
-('2025-01-02', 2, 'familia_02.jpg', 0),
-('2025-01-03', 3, 'familia_03.jpg', 1),
-('2025-01-04', 4, 'familia_04.jpg', 0);
+INSERT INTO `familia` (data_cadastro, endereco_id, foto_id, possui_prioridade) VALUES
+('2025-01-01', 1, null, 1),
+('2025-01-02', 2, null, 0),
+('2025-01-03', 3, null, 1),
+('2025-01-04', 4, null, 0);
 
 -- 
 -- pessoa
 -- 
-INSERT INTO `pessoa` (nome, rg, cpf, dt_nascimento, profissao_id, familia_id, is_responsavel, grau_parentesco, telefone) VALUES
-('João da Silva',   '334490662', '39308870881', '1985-06-15', 1,    1, 1, 'Pai',    '11940028920'),
-('Maria da Silva',  '377685094', '27131850845', '1988-09-20', 2,    1, 0, 'Mãe',   '11976543210'),
-('Pedro da Silva',  '283118854', '46331122877', '2012-03-10', NULL, 1, 0, 'Filho', '11965432109'),
-('Carla Oliveira',  '376315891', '72647130833', '1990-04-12', 5,    2, 1, 'Mãe',   '11955001100'),
-('Lucas Oliveira',  '278403050', '27407725802', '2015-11-08', NULL, 2, 0, 'Filho', '11955001101'),
-('Fernanda Lima',   '439955609', '29547647830', '1978-02-25', 12,   3, 1, 'Mãe',   '11933445566'),
-('Rafael Lima',     '174459609', '82395800848', '1975-07-30', 8,    3, 0, 'Pai',   '11933445567'),
-('Beatriz Costa',   '275066459', '73808940808', '1995-12-01', 13,   4, 1, 'Mãe',   '11922334455'),
-('Henrique Costa',  '468510977', '62272437877', '2018-05-20', NULL, 4, 0, 'Filho', '11922334456');
+INSERT INTO `pessoa` (nome, rg, cpf, dt_nascimento, profissao_id, familia_id, is_responsavel, grau_parentesco, telefone, sexo) VALUES
+('João da Silva',   '334490662', '39308870881', '1985-06-15', 1,    1, 1, 'Pai',    '11940028920', 'MASCULINO'),
+('Maria da Silva',  '377685094', '27131850845', '1988-09-20', 2,    1, 0, 'Mãe',   '11976543210', 'FEMININO'),
+('Pedro da Silva',  '283118854', '46331122877', '2012-03-10', NULL, 1, 0, 'Filho', '11965432109', 'MASCULINO'),
+('Carla Oliveira',  '376315891', '72647130833', '1990-04-12', 5,    2, 1, 'Mãe',   '11955001100', 'FEMININO'),
+('Lucas Oliveira',  '278403050', '27407725802', '2015-11-08', NULL, 2, 0, 'Filho', '11955001101', 'MASCULINO'),
+('Fernanda Lima',   '439955609', '29547647830', '1978-02-25', 12,   3, 1, 'Mãe',   '11933445566', 'FEMININO'),
+('Rafael Lima',     '174459609', '82395800848', '1975-07-30', 8,    3, 0, 'Pai',   '11933445567', 'MASCULINO'),
+('Beatriz Costa',   '275066459', '73808940808', '1995-12-01', 13,   4, 1, 'Mãe',   '11922334455', 'FEMININO'),
+('Henrique Costa',  '468510977', '62272437877', '2018-05-20', NULL, 4, 0, 'Filho', '11922334456', 'MASCULINO');
 
 -- 
 -- categoria
