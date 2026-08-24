@@ -253,7 +253,8 @@ INSERT INTO `acesso` (nome_tela) VALUES
 ('listar_produtos'),
 ('listar_acessos'),
 ('listar_cargos'),
-('listar_profissoes');
+('listar_profissoes'),
+('visualizar_arquivos');
 
 -- 
 -- cargo
@@ -273,7 +274,7 @@ SELECT 1, id FROM `acesso`;
 -- 
 INSERT INTO `funcionario` VALUES 
 (1, 'João Silva', '52437201866', '$2a$10$vWlYEp1T8pbMJVL2JUgb8uhDbeFkwAOYdTtLM.Jr84kLWHLqs3BQ2', NULL, 1),
-(2, 'Ana Souza',  '31274856900', '$2a$10$xKpL9mQw2nRtVbHuJdYe5OiWzA1csFgM3kD7pN6qE4rT8vX0yZ.', NULL, 2);
+(2, 'Ana Souza',  '24704891801', '$2a$10$xKpL9mQw2nRtVbHuJdYe5OiWzA1csFgM3kD7pN6qE4rT8vX0yZ.', NULL, 2);
 
 -- 
 -- estado
