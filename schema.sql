@@ -114,7 +114,6 @@ CREATE TABLE `categoria` (
 CREATE TABLE `produto` (
   `id` int NOT NULL AUTO_INCREMENT,
   `nome` varchar(45) NOT NULL,
-  `quantidade` int NOT NULL,
   `descricao` varchar(100) DEFAULT NULL,
   `categoria_id` int DEFAULT NULL,
   `ativo` boolean default true not null,
@@ -141,7 +140,7 @@ CREATE TABLE `endereco` (
   `cep` varchar(8) NOT NULL,
   `bairro` varchar(50) NOT NULL,
   `logradouro` varchar(80) NOT NULL,
-  `numero` int NOT NULL,
+  `numero` varchar(20) NOT NULL,
   `complemento` varchar(45) DEFAULT NULL,
   `cidade` varchar(50) NOT NULL,
   `estado_id` int NOT NULL,
@@ -176,6 +175,15 @@ CREATE TABLE `profissao` (
 );
 
 -- 
+-- Tabela: grau_parentesco
+-- 
+CREATE TABLE `grau_parentesco` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `grau` varchar(80) NOT NULL,
+  PRIMARY KEY (`id`)
+);
+
+-- 
 -- Tabela: pessoa
 -- 
 CREATE TABLE `pessoa` (
@@ -187,14 +195,29 @@ CREATE TABLE `pessoa` (
   `profissao_id` int DEFAULT NULL,
   `familia_id` int NOT NULL,
   `is_responsavel` tinyint(1) NOT NULL,
-  `grau_parentesco` varchar(45) NOT NULL,
+  `grau_parentesco_id` int NOT NULL,
   `telefone` varchar(11) NOT NULL,
   `sexo` varchar(200) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `profissao_id` (`profissao_id`),
   KEY `familia_id` (`familia_id`),
+  KEY `grau_parentesco_id` (`grau_parentesco_id`),
   CONSTRAINT `pessoa_ibfk_1` FOREIGN KEY (`profissao_id`) REFERENCES `profissao` (`id`),
-  CONSTRAINT `pessoa_ibfk_2` FOREIGN KEY (`familia_id`) REFERENCES `familia` (`id`)
+  CONSTRAINT `pessoa_ibfk_2` FOREIGN KEY (`familia_id`) REFERENCES `familia` (`id`),
+  CONSTRAINT `pessoa_ibfk_3` FOREIGN KEY (`grau_parentesco_id`) REFERENCES `grau_parentesco` (`id`)
+);
+
+-- 
+-- Tabela: historico_estoque
+-- 
+CREATE TABLE `historico_estoque` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `quantidade` double NOT NULL,
+  `data_estoque` date NOT NULL,
+  `produto_id` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `produto_id` (`produto_id`),
+  CONSTRAINT `historico_estoque_ibfk_1` FOREIGN KEY (`produto_id`) REFERENCES `produto` (`id`)
 );
 
 -- 
@@ -227,13 +250,14 @@ INSERT INTO `acesso` (nome_tela) VALUES
 ('cadastrar_familias'),
 ('cadastrar_auditorias'),
 ('cadastrar_funcionarios'),
-('cadastrar_produto'),
+('cadastrar_produtos'),
 ('cadastrar_entregas'),
 ('cadastrar_acessos'),
 ('cadastrar_categoria'),
 ('cadastrar_cargos'),
 ('cadastrar_profissoes'),
-('editar_produto'),
+('cadastrar_estoques'),
+('editar_produtos'),
 ('editar_auditorias'),
 ('editar_familias'),
 ('editar_funcionarios'),
@@ -241,16 +265,18 @@ INSERT INTO `acesso` (nome_tela) VALUES
 ('editar_acessos'),
 ('editar_cargos'),
 ('editar_profissoes'),
-('editar_categoria'),
+('editar_categorias'),
+('editar_estoques'),
 ('excluir_familias'),
 ('excluir_auditorias'),
-('excluir_categoria'),
-('excluir_produto'),
+('excluir_categorias'),
+('excluir_produtos'),
 ('excluir_funcionarios'),
 ('excluir_entregas'),
 ('excluir_acessos'),
 ('excluir_cargos'),
 ('excluir_profissoes'),
+('excluir_estoques'),
 ('listar_familias'),
 ('listar-categorias'),
 ('listar_auditorias'),
@@ -260,6 +286,7 @@ INSERT INTO `acesso` (nome_tela) VALUES
 ('listar_acessos'),
 ('listar_cargos'),
 ('listar_profissoes'),
+('listar_estoques'),
 ('visualizar_arquivos');
 
 -- 
@@ -297,11 +324,11 @@ INSERT INTO `estado` VALUES
 -- endereco
 -- 
 INSERT INTO `endereco` (cep, bairro, logradouro, numero, complemento, cidade, estado_id) VALUES 
-('01310100', 'Bela Vista',    'Avenida Paulista',       1578, 'Apto 101',  'São Paulo',       25),
-('20040020', 'Centro',        'Avenida Rio Branco',      156, 'Sala 302',  'Rio de Janeiro',  19),
-('30130110', 'Centro',        'Avenida Afonso Pena',    1500, NULL,        'Belo Horizonte',  13),
-('80010020', 'Centro',        'Rua XV de Novembro',      800, 'Casa',      'Curitiba',        16),
-('40020010', 'Comercial',     'Avenida Sete de Setembro', 220, NULL,       'Salvador',         5);
+('01310100', 'Bela Vista',    'Avenida Paulista',       '1578', 'Apto 101',  'São Paulo',       25),
+('20040020', 'Centro',        'Avenida Rio Branco',      '156', 'Sala 302',  'Rio de Janeiro',  19),
+('30130110', 'Centro',        'Avenida Afonso Pena',    '1500', NULL,        'Belo Horizonte',  13),
+('80010020', 'Centro',        'Rua XV de Novembro',      '800', 'Casa',      'Curitiba',        16),
+('40020010', 'Comercial',     'Avenida Sete de Setembro', '220', NULL,       'Salvador',         5);
 
 -- 
 -- profissao
@@ -317,6 +344,19 @@ INSERT INTO `profissao` VALUES
 (29,'Técnico de manutenção'),(30,'Auxiliar de logística');
 
 -- 
+-- grau_parentesco
+-- 
+INSERT INTO `grau_parentesco` (grau) VALUES
+('Pai/Mãe'),
+('Filho/Filha'),
+('Avô/Avó'),
+('Tio/Tia'),
+('Primo/Prima'),
+('Sobrinho/Sobrinha'),
+('Neto/Neta'),
+('Genro/Nora');
+
+-- 
 -- categoria arquivo
 -- 
 INSERT INTO `categoria_arquivo` (nome) VALUES
@@ -327,24 +367,25 @@ INSERT INTO `categoria_arquivo` (nome) VALUES
 -- familia
 -- 
 INSERT INTO `familia` (data_cadastro, endereco_id, foto_id, possui_prioridade) VALUES
-('2025-01-01', 1, null, 1),
-('2025-01-02', 2, null, 0),
-('2025-01-03', 3, null, 1),
-('2025-01-04', 4, null, 0);
+('2026-01-01', 1, null, 1),
+('2026-01-02', 2, null, 0),
+('2026-01-03', 3, null, 1),
+('2026-01-04', 4, null, 0);
 
 -- 
 -- pessoa
+-- Mapeamento de grau_parentesco_id: 1 = Pai, 2 = Mãe, 3 = Filho
 -- 
-INSERT INTO `pessoa` (nome, rg, cpf, dt_nascimento, profissao_id, familia_id, is_responsavel, grau_parentesco, telefone, sexo) VALUES
-('João da Silva',   '334490662', '39308870881', '1985-06-15', 1,    1, 1, 'Pai',    '11940028920', 'MASCULINO'),
-('Maria da Silva',  '377685094', '27131850845', '1988-09-20', 2,    1, 0, 'Mãe',   '11976543210', 'FEMININO'),
-('Pedro da Silva',  '283118854', '46331122877', '2012-03-10', NULL, 1, 0, 'Filho', '11965432109', 'MASCULINO'),
-('Carla Oliveira',  '376315891', '72647130833', '1990-04-12', 5,    2, 1, 'Mãe',   '11955001100', 'FEMININO'),
-('Lucas Oliveira',  '278403050', '27407725802', '2015-11-08', NULL, 2, 0, 'Filho', '11955001101', 'MASCULINO'),
-('Fernanda Lima',   '439955609', '29547647830', '1978-02-25', 12,   3, 1, 'Mãe',   '11933445566', 'FEMININO'),
-('Rafael Lima',     '174459609', '82395800848', '1975-07-30', 8,    3, 0, 'Pai',   '11933445567', 'MASCULINO'),
-('Beatriz Costa',   '275066459', '73808940808', '1995-12-01', 13,   4, 1, 'Mãe',   '11922334455', 'FEMININO'),
-('Henrique Costa',  '468510977', '62272437877', '2018-05-20', NULL, 4, 0, 'Filho', '11922334456', 'MASCULINO');
+INSERT INTO `pessoa` (nome, rg, cpf, dt_nascimento, profissao_id, familia_id, is_responsavel, grau_parentesco_id, telefone, sexo) VALUES
+('João da Silva',   '334490662', '39308870881', '1985-06-15', 1,    1, 1, 1, '11940028920', 'MASCULINO'),
+('Maria da Silva',  '377685094', '27131850845', '1988-09-20', 2,    1, 0, 1, '11976543210', 'FEMININO'),
+('Pedro da Silva',  '283118854', '46331122877', '2012-03-10', NULL, 1, 0, 2, '11965432109', 'MASCULINO'),
+('Carla Oliveira',  '376315891', '72647130833', '1990-04-12', 5,    2, 1, 1, '11955001100', 'FEMININO'),
+('Lucas Oliveira',  '278403050', '27407725802', '2015-11-08', NULL, 2, 0, 2, '11955001101', 'MASCULINO'),
+('Fernanda Lima',   '439955609', '29547647830', '1978-02-25', 12,   3, 1, 1, '11933445566', 'FEMININO'),
+('Rafael Lima',     '174459609', '82395800848', '1975-07-30', 8,    3, 0, 1, '11933445567', 'MASCULINO'),
+('Beatriz Costa',   '275066459', '73808940808', '1995-12-01', 13,   4, 1, 1, '11922334455', 'FEMININO'),
+('Henrique Costa',  '468510977', '62272437877', '2018-05-20', NULL, 4, 0, 2, '11922334456', 'MASCULINO');
 
 -- 
 -- categoria
@@ -359,44 +400,58 @@ INSERT INTO `categoria` (nome) VALUES
 -- 
 -- produto
 -- 
-INSERT INTO `produto` (nome, quantidade, descricao, categoria_id) VALUES
-('Cesta Básica',      50, 'Cesta com itens essenciais de alimentação',      1),
-('Óleo de Soja 900ml', 120, 'Garrafa de óleo de soja 900ml',               1),
-('Arroz 5kg',         80, 'Pacote de arroz tipo 1 5kg',                     1),
-('Feijão 1kg',        90, 'Pacote de feijão carioca 1kg',                   1),
-('Sabonete',          200, 'Sabonete 90g',                                  2),
-('Shampoo 350ml',     150, 'Shampoo neutro 350ml',                          2),
-('Pasta de Dente',    180, 'Pasta de dente com flúor 90g',                  2),
-('Detergente 500ml',  160, 'Detergente líquido 500ml',                      3),
-('Sabão em Pó 1kg',   100, 'Sabão em pó multiação 1kg',                    3),
-('Água Sanitária 1L',  70, 'Água sanitária 1 litro',                        3),
-('Agasalho Adulto',    40, 'Agasalho adulto tamanhos variados',             4),
-('Roupa Infantil',     35, 'Kit roupa infantil sortida',                    4),
-('Dipirona 500mg',    300, 'Dipirona sódica 500mg caixa com 20 comprimidos', 5),
-('Vitamina C 1g',     250, 'Vitamina C efervescente 1g caixa com 10 unidades', 5);
+INSERT INTO `produto` (nome, descricao, categoria_id) VALUES
+('Cesta Básica' , 'Cesta com itens essenciais de alimentação',      1),
+('Óleo de Soja 900ml' , 'Garrafa de óleo de soja 900ml',               1),
+('Arroz 5kg' , 'Pacote de arroz tipo 1 5kg',                     1),
+('Feijão 1kg' , 'Pacote de feijão carioca 1kg',                   1),
+('Sabonete' , 'Sabonete 90g',                                  2),
+('Shampoo 350ml' , 'Shampoo neutro 350ml',                          2),
+('Pasta de Dente' , 'Pasta de dente com flúor 90g',                  2),
+('Detergente 500ml' , 'Detergente líquido 500ml',                      3),
+('Sabão em Pó 1kg' , 'Sabão em pó multiação 1kg',                    3),
+('Água Sanitária 1L' , 'Água sanitária 1 litro',                        3),
+('Agasalho Adulto' , 'Agasalho adulto tamanhos variados',             4),
+('Roupa Infantil' , 'Kit roupa infantil sortida',                    4),
+('Dipirona 500mg' , 'Dipirona sódica 500mg caixa com 20 comprimidos', 5),
+('Vitamina C 1g' , 'Vitamina C efervescente 1g caixa com 10 unidades', 5);
+
+-- 
+-- historico_estoque
+-- 
+INSERT INTO `historico_estoque` (quantidade, data_estoque, produto_id) VALUES
+(20, '2026-02-01', 1),
+(20, '2026-02-01', 2),
+(20, '2026-03-01', 3),
+(20, '2026-03-01', 4),
+(20, '2026-03-01', 5),
+(20, '2026-04-01', 6),
+(20, '2026-04-01', 7),
+(20, '2026-04-01', 8),
+(20, '2026-04-01', 1);
 
 -- 
 -- auditoria
 -- 
 INSERT INTO `auditoria` (tipo_log, log, dado_antigo, dado_novo, created_at, funcionario_id) VALUES
-('INSERT', 'cadastro_familia',    NULL,             'familia_id=1',  '2025-01-01', 1),
-('INSERT', 'cadastro_familia',    NULL,             'familia_id=2',  '2025-01-02', 1),
-('UPDATE', 'edicao_produto',      'quantidade=100', 'quantidade=80', '2025-02-10', 1),
-('INSERT', 'cadastro_entrega',    NULL,             'entrega_id=1',  '2025-02-15', 1),
-('DELETE', 'exclusao_produto',    'produto_id=5',   NULL,            '2025-03-01', 2),
-('INSERT', 'cadastro_funcionario', NULL,            'funcionario_id=2', '2025-03-05', 2);
+('INSERT', 'cadastro_familia',    NULL,             'familia_id=1',  '2026-01-01', 1),
+('INSERT', 'cadastro_familia',    NULL,             'familia_id=2',  '2026-01-02', 1),
+('UPDATE', 'edicao_produto',      'quantidade=100', 'quantidade=80', '2026-02-10', 1),
+('INSERT', 'cadastro_entrega',    NULL,             'entrega_id=1',  '2026-02-15', 1),
+('DELETE', 'exclusao_produto',    'produto_id=5',   NULL,            '2026-03-01', 2),
+('INSERT', 'cadastro_funcionario', NULL,            'funcionario_id=2', '2026-03-05', 2);
 
 -- 
 -- entrega
 -- 
 INSERT INTO `entrega` (data_entrega, funcionario_id, pessoa_id, produto_id) VALUES
-('2025-02-15', 1, 1, 1),
-('2025-02-15', 1, 4, 1),
-('2025-02-15', 1, 6, 2),
-('2025-03-10', 1, 1, 3),
-('2025-03-10', 2, 4, 4),
-('2025-03-10', 2, 8, 5),
-('2025-04-05', 1, 1, 6),
-('2025-04-05', 2, 6, 7),
-('2025-04-20', 1, 4, 8),
-('2025-04-20', 2, 8, 1);
+('2026-02-15', 1, 1, 1),
+('2026-02-15', 1, 4, 1),
+('2026-02-15', 1, 6, 2),
+('2026-03-10', 1, 1, 3),
+('2026-03-10', 2, 4, 4),
+('2026-03-10', 2, 8, 5),
+('2026-04-05', 1, 1, 6),
+('2026-04-05', 2, 6, 7),
+('2026-04-20', 1, 4, 8),
+('2026-04-20', 2, 8, 1);
