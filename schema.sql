@@ -21,6 +21,7 @@ CREATE TABLE `acesso` (
 CREATE TABLE `cargo` (
   `id` int NOT NULL AUTO_INCREMENT,
   `nome` varchar(45) NOT NULL,
+  `descricao` varchar(200) NOT NULL,
   PRIMARY KEY (`id`)
 );
 
@@ -293,8 +294,9 @@ INSERT INTO `acesso` (nome_tela) VALUES
 -- cargo
 -- 
 INSERT INTO `cargo` VALUES 
-(1, 'Diretor'),
-(2, 'Recepcionista');
+(1, 'Diretor', 'Diretoria do CIFA, responsavel pelo orquestramento da organização'),
+(2, 'Recepcionista', 'Recepcionar as pessoas que necessitarem de informações ou de auxílio');
+
 
 -- 
 -- cargo_has_acesso
