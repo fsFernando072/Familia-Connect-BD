@@ -179,6 +179,7 @@ CREATE TABLE `familia` (
   `endereco_id` int NOT NULL,
   `foto_id` int DEFAULT NULL,
   `possui_prioridade` tinyint(1) NOT NULL,
+  id_carteirinha VARCHAR(255),
   PRIMARY KEY (`id`),
   KEY `endereco_id` (`endereco_id`),
   KEY `foto_id` (`foto_id`),
@@ -492,7 +493,7 @@ VALUES
 ('Dipirona 500mg', 'Dipirona sódica 500mg caixa com 20 comprimidos', 5),
 ('Vitamina C 1g', 'Vitamina C efervescente 1g caixa com 10 unidades', 5);
 
-
+select * from produto;
 /* ------------------------------------------------------------
    historico_estoque
    ------------------------------------------------------------ */
@@ -509,6 +510,9 @@ VALUES
 (20, '2026-04-01', 7),
 (20, '2026-04-01', 8),
 (20, '2026-04-01', 1);
+
+INSERT INTO historico_estoque
+(quantidade, data_estoque, produto_id) VALUES (20, CURDATE(), 1);
 
 
 /* ------------------------------------------------------------
