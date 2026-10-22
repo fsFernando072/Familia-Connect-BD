@@ -2,11 +2,9 @@ CREATE DATABASE IF NOT EXISTS familia_connect;
 
 USE familia_connect;
 
-
 /* ============================================================
    CREATES
    ============================================================ */
-
 
 /* ------------------------------------------------------------
    Tabela: cargo
@@ -78,6 +76,7 @@ CREATE TABLE `funcionario` (
   `senha` varchar(100) NOT NULL,
   `foto_id` int DEFAULT NULL,
   `cargo_id` int NOT NULL,
+  `ativo` boolean default true not null,
   PRIMARY KEY (`id`),
   UNIQUE KEY `cpf_UNIQUE` (`cpf`),
   KEY `cargo_id` (`cargo_id`),
@@ -86,25 +85,6 @@ CREATE TABLE `funcionario` (
     FOREIGN KEY (`cargo_id`) REFERENCES `cargo` (`id`),
   CONSTRAINT `funcionario_ibfk_2`
     FOREIGN KEY (`foto_id`) REFERENCES `arquivo` (`id`)
-);
-
-
-/* ------------------------------------------------------------
-   Tabela: auditoria
-   ------------------------------------------------------------ */
-
-CREATE TABLE `auditoria` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `tipo_log` varchar(45) DEFAULT NULL,
-  `log` varchar(45) DEFAULT NULL,
-  `dado_antigo` varchar(45) DEFAULT NULL,
-  `dado_novo` varchar(45) DEFAULT NULL,
-  `created_at` date DEFAULT NULL,
-  `funcionario_id` int NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `funcionario_id` (`funcionario_id`),
-  CONSTRAINT `auditoria_ibfk_1`
-    FOREIGN KEY (`funcionario_id`) REFERENCES `funcionario` (`id`)
 );
 
 
@@ -313,10 +293,10 @@ INSERT INTO `cargo_permissao` (cargo_id, pagina, nivel) VALUES
    funcionario
    ------------------------------------------------------------ */
 
-INSERT INTO `funcionario` VALUES 
-(1, 'João Silva', '52437201866', '$2a$10$vWlYEp1T8pbMJVL2JUgb8uhDbeFkwAOYdTtLM.Jr84kLWHLqs3BQ2', NULL, 1),
-(2, 'Ana Souza', '24704891801', '$2a$10$xKpL9mQw2nRtVbHuJdYe5OiWzA1csFgM3kD7pN6qE4rT8vX0yZ.', NULL, 2);
-
+INSERT INTO `funcionario` (nome, cpf, senha, foto_id, cargo_id) 
+values
+('João Silva', '52437201866', '$2a$10$vWlYEp1T8pbMJVL2JUgb8uhDbeFkwAOYdTtLM.Jr84kLWHLqs3BQ2', NULL, 1),
+('Ana Souza', '24704891801', '$2a$10$xKpL9mQw2nRtVbHuJdYe5OiWzA1csFgM3kD7pN6qE4rT8vX0yZ.', NULL, 2);
 
 /* ------------------------------------------------------------
    estado
@@ -513,22 +493,6 @@ VALUES
 
 INSERT INTO historico_estoque
 (quantidade, data_estoque, produto_id) VALUES (20, CURDATE(), 1);
-
-
-/* ------------------------------------------------------------
-   auditoria
-   ------------------------------------------------------------ */
-
-INSERT INTO `auditoria`
-(tipo_log, log, dado_antigo, dado_novo, created_at, funcionario_id)
-VALUES
-('INSERT', 'cadastro_familia', NULL, 'familia_id=1', '2026-01-01', 1),
-('INSERT', 'cadastro_familia', NULL, 'familia_id=2', '2026-01-02', 1),
-('UPDATE', 'edicao_produto', 'quantidade=100', 'quantidade=80', '2026-02-10', 1),
-('INSERT', 'cadastro_entrega', NULL, 'entrega_id=1', '2026-02-15', 1),
-('DELETE', 'exclusao_produto', 'produto_id=5', NULL, '2026-03-01', 2),
-('INSERT', 'cadastro_funcionario', NULL, 'funcionario_id=2', '2026-03-05', 2);
-
 
 /* ------------------------------------------------------------
    entrega
