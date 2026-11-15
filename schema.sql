@@ -73,12 +73,14 @@ CREATE TABLE `funcionario` (
   `id` int NOT NULL AUTO_INCREMENT,
   `nome` varchar(100) NOT NULL,
   `cpf` varchar(11) NOT NULL,
+  `email` varchar(254) NOT NULL,
   `senha` varchar(100) NOT NULL,
   `foto_id` int DEFAULT NULL,
   `cargo_id` int NOT NULL,
   `ativo` boolean default true not null,
   PRIMARY KEY (`id`),
   UNIQUE KEY `cpf_UNIQUE` (`cpf`),
+  UNIQUE KEY `email_UNIQUE` (`email`),
   KEY `cargo_id` (`cargo_id`),
   KEY `foto_id` (`foto_id`),
   CONSTRAINT `funcionario_ibfk_1`
@@ -293,10 +295,10 @@ INSERT INTO `cargo_permissao` (cargo_id, pagina, nivel) VALUES
    funcionario
    ------------------------------------------------------------ */
 
-INSERT INTO `funcionario` (nome, cpf, senha, foto_id, cargo_id) 
+INSERT INTO `funcionario` (nome, cpf, email, senha, foto_id, cargo_id) 
 values
-('João Silva', '52437201866', '$2a$10$vWlYEp1T8pbMJVL2JUgb8uhDbeFkwAOYdTtLM.Jr84kLWHLqs3BQ2', NULL, 1),
-('Ana Souza', '24704891801', '$2a$10$xKpL9mQw2nRtVbHuJdYe5OiWzA1csFgM3kD7pN6qE4rT8vX0yZ.', NULL, 2);
+('João Silva', '52437201866', 'joao.oliveiraneto@sptech.school', '$2a$10$vWlYEp1T8pbMJVL2JUgb8uhDbeFkwAOYdTtLM.Jr84kLWHLqs3BQ2', NULL, 1),
+('Ana Souza', '24704891801', 'anna.maegaki@sptech.school', '$2a$10$xKpL9mQw2nRtVbHuJdYe5OiWzA1csFgM3kD7pN6qE4rT8vX0yZ.', NULL, 2);
 
 /* ------------------------------------------------------------
    estado
@@ -750,4 +752,3 @@ INSERT INTO entrega (data_entrega,funcionario_id,pessoa_id,produto_id) VALUES
 ('2026-10-27', 90002, 90007, 1),
 ('2026-10-27', 90001, 90007, 4);
 COMMIT;
-
