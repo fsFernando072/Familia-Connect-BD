@@ -518,10 +518,10 @@ VALUES
 START TRANSACTION;
 
 -- Funcionarios adicionais: cargo_id=2 existente no script base
-INSERT INTO funcionario (id,nome,cpf,senha,foto_id,cargo_id,ativo) VALUES
-(90001, 'Mariana Rocha', '90000000001', '$2a$10$DEMONSTRACAO_CONTA_DESATIVADA_NAO_USAR_LOGIN', NULL, 2, 0),
-(90002, 'Carlos Mendes', '90000000002', '$2a$10$DEMONSTRACAO_CONTA_DESATIVADA_NAO_USAR_LOGIN', NULL, 2, 0),
-(90003, 'Patricia Almeida', '90000000003', '$2a$10$DEMONSTRACAO_CONTA_DESATIVADA_NAO_USAR_LOGIN', NULL, 2, 0);
+INSERT INTO funcionario (id,nome,cpf,email,senha,foto_id,cargo_id,ativo) VALUES
+(90001, 'Mariana Rocha', '90000000001', 'marianarocha@gmail.com', '$2a$10$DEMONSTRACAO_CONTA_DESATIVADA_NAO_USAR_LOGIN', NULL, 2, 0),
+(90002, 'Carlos Mendes', '90000000002', 'carlosmendes@gmail.com', '$2a$10$DEMONSTRACAO_CONTA_DESATIVADA_NAO_USAR_LOGIN', NULL, 2, 0),
+(90003, 'Patricia Almeida', '90000000003', 'patriciaalmeida@gmail.com', '$2a$10$DEMONSTRACAO_CONTA_DESATIVADA_NAO_USAR_LOGIN', NULL, 2, 0);
 
 -- Enderecos em Sao Paulo (dados ficticios)
 INSERT INTO endereco (id,cep,bairro,logradouro,numero,complemento,cidade,estado_id) VALUES
